@@ -25,8 +25,8 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     api_result weather_result;
-    DynamicWeatherView weatherView;
-    String token;
+//    DynamicWeatherView weatherView;
+    String token = "Y2FpeXVuIGFuZHJpb2QgYXBp";
     String gps = "117.1848,34.2617";
 
 
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new getWeatherTask().execute();
+        new getWeatherByToken_GPSTask().execute(token,gps);
         weatherView = findViewById(R.id.weatherView);
     }
 
@@ -56,58 +56,58 @@ public class MainActivity extends AppCompatActivity {
         weatherView.onDestroy();
     }
 
-    private class getWeatherTask extends AsyncTask<String, Integer, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(10, TimeUnit.SECONDS)
-                        .writeTimeout(10, TimeUnit.SECONDS)
-                        .readTimeout(30, TimeUnit.SECONDS)
-                        .build();
-
-                //获取Token
-                Request token_request = new Request.Builder().url("https://cdn.caiyunapp.com/etc/android_config.json").get().build();
-                Response token_response = client.newCall(token_request).execute();
-                String token_res = token_response.body().string();
-                JSONObject token_api = new JSONObject(token_res);
-                token = token_api.getString("TOKEN");
-                Log.v("测试","获取到TOKEN"+token);
-                return "ok";
-            } catch (Exception e) {
-                if (e instanceof java.net.UnknownHostException) {
-                    return "404";
-                }else if (e instanceof java.net.SocketTimeoutException){
-                    return "timeout";
-                }
-                e.printStackTrace();
-            }
-            return "timeout";
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            Log.v("测试","执行完毕"+s);
-            switch (s) {
-                case "ok":
-                    new getWeatherByToken_GPSTask().execute(token,gps);
-                    break;
-                case "404":
-                    if (!hasNetwork(MainActivity.this)) {
-                        Toast.makeText(MainActivity.this, "请检查您的网络", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, "服务器开小差了，请稍后再试", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case "timeout":
-                    Toast.makeText(MainActivity.this, "服务器连接超时，请稍后再试", Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-            }
-            super.onPostExecute(s);
-        }
-
-    }
+//    private class getWeatherTask extends AsyncTask<String, Integer, String> {
+//        @Override
+//        protected String doInBackground(String... strings) {
+//            try {
+//                OkHttpClient client = new OkHttpClient.Builder()
+//                        .connectTimeout(10, TimeUnit.SECONDS)
+//                        .writeTimeout(10, TimeUnit.SECONDS)
+//                        .readTimeout(30, TimeUnit.SECONDS)
+//                        .build();
+//
+//                //获取Token
+//                Request token_request = new Request.Builder().url("https://cdn.caiyunapp.com/etc/android_config.json").get().build();
+//                Response token_response = client.newCall(token_request).execute();
+//                String token_res = token_response.body().string();
+//                JSONObject token_api = new JSONObject(token_res);
+//                token = token_api.getString("TOKEN");
+//                Log.v("测试","获取到TOKEN"+token);
+//                return "ok";
+//            } catch (Exception e) {
+//                if (e instanceof java.net.UnknownHostException) {
+//                    return "404";
+//                }else if (e instanceof java.net.SocketTimeoutException){
+//                    return "timeout";
+//                }
+//                e.printStackTrace();
+//            }
+//            return "timeout";
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            Log.v("测试","执行完毕"+s);
+//            switch (s) {
+//                case "ok":
+//                    new getWeatherByToken_GPSTask().execute(token,gps);
+//                    break;
+//                case "404":
+//                    if (!hasNetwork(MainActivity.this)) {
+//                        Toast.makeText(MainActivity.this, "请检查您的网络", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(MainActivity.this, "服务器开小差了，请稍后再试", Toast.LENGTH_SHORT).show();
+//                    }
+//                    break;
+//                case "timeout":
+//                    Toast.makeText(MainActivity.this, "服务器连接超时，请稍后再试", Toast.LENGTH_SHORT).show();
+//                    break;
+//                default:
+//            }
+//            super.onPostExecute(s);
+//        }
+//
+//    }
 
     private class getWeatherByToken_GPSTask extends AsyncTask<String, Integer, String> {
         @Override
@@ -169,57 +169,57 @@ public class MainActivity extends AppCompatActivity {
             double preciption = (double) weather_result.getMinutelyPrecipitation_2h_list().get(0);
             Log.v("测试","第一天的日期"+one+two+three+preciption);
             //CLEAR_DAY：晴天;CLEAR_NIGHT：晴夜;PARTLY_CLOUDY_DAY：多云;PARTLY_CLOUDY_NIGHT：多云;CLOUDY：阴;RAIN： 雨;SNOW：雪;WIND：风;HAZE：雾霾沙尘
-            switch (skycon) {
-                case "CLEAR_DAY":
-                    weatherView.setDrawerType(BaseDrawer.Type.CLEAR_D);
-                    break;
-                case "CLEAR_NIGHT":
-                    weatherView.setDrawerType(BaseDrawer.Type.CLEAR_N);
-                    break;
-                case "PARTLY_CLOUDY_DAY":
-                    weatherView.setDrawerType(BaseDrawer.Type.OVERCAST_D);
-                    break;
-                case "PARTLY_CLOUDY_NIGHT":
-                    weatherView.setDrawerType(BaseDrawer.Type.OVERCAST_N);
-                    break;
-                case "CLOUDY":
-                    if (!isNight()){
-                        weatherView.setDrawerType(BaseDrawer.Type.CLOUDY_D);
-                    }else {
-                        weatherView.setDrawerType(BaseDrawer.Type.CLOUDY_N);
-                    }
-                    break;
-                case "RAIN":
-                    if (!isNight()){
-                        weatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
-                    }else {
-                        weatherView.setDrawerType(BaseDrawer.Type.RAIN_N);
-                    }
-                    break;
-                case "SNOW":
-                    if (!isNight()){
-                        weatherView.setDrawerType(BaseDrawer.Type.SNOW_D);
-                    }else {
-                        weatherView.setDrawerType(BaseDrawer.Type.SNOW_N);
-                    }
-                    break;
-                case "WIND":
-                    if (!isNight()){
-                        weatherView.setDrawerType(BaseDrawer.Type.WIND_D);
-                    }else {
-                        weatherView.setDrawerType(BaseDrawer.Type.WIND_N);
-                    }
-                    break;
-                case "HAZE":
-                    if (!isNight()){
-                        weatherView.setDrawerType(BaseDrawer.Type.HAZE_D);
-                    }else {
-                        weatherView.setDrawerType(BaseDrawer.Type.HAZE_N);
-                    }
-                    break;
-                default:
-                    weatherView.setDrawerType(BaseDrawer.Type.DEFAULT);
-            }
+//            switch (skycon) {
+//                case "CLEAR_DAY":
+//                    weatherView.setDrawerType(BaseDrawer.Type.CLEAR_D);
+//                    break;
+//                case "CLEAR_NIGHT":
+//                    weatherView.setDrawerType(BaseDrawer.Type.CLEAR_N);
+//                    break;
+//                case "PARTLY_CLOUDY_DAY":
+//                    weatherView.setDrawerType(BaseDrawer.Type.OVERCAST_D);
+//                    break;
+//                case "PARTLY_CLOUDY_NIGHT":
+//                    weatherView.setDrawerType(BaseDrawer.Type.OVERCAST_N);
+//                    break;
+//                case "CLOUDY":
+//                    if (!isNight()){
+//                        weatherView.setDrawerType(BaseDrawer.Type.CLOUDY_D);
+//                    }else {
+//                        weatherView.setDrawerType(BaseDrawer.Type.CLOUDY_N);
+//                    }
+//                    break;
+//                case "RAIN":
+//                    if (!isNight()){
+//                        weatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
+//                    }else {
+//                        weatherView.setDrawerType(BaseDrawer.Type.RAIN_N);
+//                    }
+//                    break;
+//                case "SNOW":
+//                    if (!isNight()){
+//                        weatherView.setDrawerType(BaseDrawer.Type.SNOW_D);
+//                    }else {
+//                        weatherView.setDrawerType(BaseDrawer.Type.SNOW_N);
+//                    }
+//                    break;
+//                case "WIND":
+//                    if (!isNight()){
+//                        weatherView.setDrawerType(BaseDrawer.Type.WIND_D);
+//                    }else {
+//                        weatherView.setDrawerType(BaseDrawer.Type.WIND_N);
+//                    }
+//                    break;
+//                case "HAZE":
+//                    if (!isNight()){
+//                        weatherView.setDrawerType(BaseDrawer.Type.HAZE_D);
+//                    }else {
+//                        weatherView.setDrawerType(BaseDrawer.Type.HAZE_N);
+//                    }
+//                    break;
+//                default:
+//                    weatherView.setDrawerType(BaseDrawer.Type.DEFAULT);
+//            }
         }catch(Exception e){
             e.printStackTrace();
         }
