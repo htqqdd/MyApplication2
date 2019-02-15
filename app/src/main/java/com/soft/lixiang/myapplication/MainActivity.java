@@ -5,10 +5,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.soft.lixiang.myapplication.materialWeatherView.MaterialWeatherView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,6 +27,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+    WeatherView weatherView;
     api_result weather_result;
 //    DynamicWeatherView weatherView;
     String token = "Y2FpeXVuIGFuZHJpb2QgYXBp";
@@ -41,19 +45,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        weatherView.onResume();
+//        weatherView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        weatherView.onPause();
+//        weatherView.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        weatherView.onDestroy();
+//        weatherView.onDestroy();
     }
 
 //    private class getWeatherTask extends AsyncTask<String, Integer, String> {
@@ -168,6 +172,22 @@ public class MainActivity extends AppCompatActivity {
             int three = weather_result.getDailyTemperatureList().get(1).getAvg();
             double preciption = (double) weather_result.getMinutelyPrecipitation_2h_list().get(0);
             Log.v("测试","第一天的日期"+one+two+three+preciption);
+            this.weatherView = findViewById(R.id.activity_main_weatherView);
+            if (weatherView instanceof MaterialWeatherView) {
+                int kind;
+                kind = WeatherView.WEATHER_KIND_CLEAR_DAY;
+//                if (locationNow.weather == null) {
+//                    kind = WeatherView.WEATHER_KIND_CLEAR_DAY;
+//                } else {
+//                    kind = WeatherViewController.getWeatherViewWeatherKind(
+//                            locationNow.weather.realTime.weatherKind,
+//                            TimeManager.getInstance(this).isDayTime());
+//                }
+                weatherView.setWeather(kind);
+//                ((MaterialWeatherView) weatherView).setOpenGravitySensor(
+//                        PreferenceManager.getDefaultSharedPreferences(this)
+//                                .getBoolean(getString(R.string.key_gravity_sensor_switch), true));
+            }
             //CLEAR_DAY：晴天;CLEAR_NIGHT：晴夜;PARTLY_CLOUDY_DAY：多云;PARTLY_CLOUDY_NIGHT：多云;CLOUDY：阴;RAIN： 雨;SNOW：雪;WIND：风;HAZE：雾霾沙尘
 //            switch (skycon) {
 //                case "CLEAR_DAY":

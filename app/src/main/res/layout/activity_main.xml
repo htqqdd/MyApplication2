@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.soft.lixiang.myapplication.DynamicWeatherView
-        android:id="@+id/weatherView"
+    <wangdaye.com.geometricweather.ui.widget.weatherView.materialWeatherView.MaterialWeatherView
+        android:id="@+id/activity_main_weatherView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <RelativeLayout

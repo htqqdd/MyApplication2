@@ -1,4 +1,4 @@
-package com.soft.lixiang.myapplication;
+package wangdaye.com.geometricweather.ui.widget.weatherView;
 
 import wangdaye.com.geometricweather.data.entity.model.weather.Weather;
 import wangdaye.com.geometricweather.utils.helpter.WeatherHelper;

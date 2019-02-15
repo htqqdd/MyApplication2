@@ -1,4 +1,4 @@
-package com.soft.lixiang.myapplication;
+package wangdaye.com.geometricweather.ui.widget.weatherView;
 
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
@@ -47,13 +47,13 @@ public interface WeatherView {
             WEATHER_KIND_WIND})
     @interface WeatherKindRule {}
 
-    void setWeather(@WeatherKindRule int weatherKind);
+    void setWeather(@WeatherView.WeatherKindRule int weatherKind);
 
     void onClick();
 
     void onScroll(int scrollY);
 
-    @WeatherKindRule
+    @WeatherView.WeatherKindRule
     int getWeatherKind();
 
     // primary color * 1, chart colors * 2.
